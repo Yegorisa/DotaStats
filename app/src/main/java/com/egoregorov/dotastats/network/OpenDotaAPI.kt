@@ -11,6 +11,6 @@ interface OpenDotaAPI {
     /**
      * Get the list of the pots from the API
      */
-    @GET("heroes")
+    @GET("heroStats")
     fun getHeroesList(): Observable<List<DotaHeroSimple>>
 }
