@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.egoregorov.dotastats.R
 import com.egoregorov.dotastats.models.DotaHeroSimple
 import kotlinx.android.synthetic.main.home_fragment.*
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.KoinComponent
 
 class HomeFragment : Fragment() {
 
-    private val homeViewModel: HomeViewModel by viewModel()
+    private val homeViewModel: HomeViewModel by sharedViewModel()
 
     private lateinit var adapter: HeroListAdapter
 
@@ -33,15 +34,14 @@ class HomeFragment : Fragment() {
         val viewManager = LinearLayoutManager(context)
         homeFragmentHeroRecyclerView.layoutManager = viewManager
         homeFragmentHeroRecyclerView.adapter = adapter
-        homeViewModel.heroesList.observe(this, Observer {
-            setHeroesList(it)
+        homeViewModel.heroesList.observe(this, Observer { heroesList ->
+            if (heroesList != null) {
+                setHeroesList(heroesList)
+            } else {
+                homeFragmentLoadingSpinner.visibility = View.VISIBLE
+                homeFragmentHeroRecyclerView.visibility = View.GONE
+            }
         })
-        homeViewModel.heroesList.value?.let {
-            setHeroesList(it)
-        } ?: run {
-            homeFragmentLoadingSpinner.visibility = View.VISIBLE
-            homeFragmentHeroRecyclerView.visibility = View.GONE
-        }
     }
 
     fun setHeroesList(heroesList: List<DotaHeroSimple>) {
